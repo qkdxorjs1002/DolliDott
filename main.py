@@ -15,7 +15,7 @@ comments_lyrics = ['> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:\n> 돌
 
 @bot.event
 async def on_ready():
-    message = 'Logged in as' + bot.user.name + ', id: ' + bot.user.id + '\n'
+    message = 'Logged in as' + bot.user.name + ', id: ' + str(bot.user.id) + '\n'
     print(message)
 
 
