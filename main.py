@@ -73,7 +73,7 @@ async def crazy(ctx, user: discord.User, cnt=1):
 @crazy.error
 async def crazy_error(ctx, error):
     print(error)
-    if '50007' in error:
+    if '50007' in str(error):
         await ctx.send('> :llama: **에구구**\n**테러를 받은 유저가 저를 차단했어요...칫...:put_litter_in_its_place:**')
     else:
         await ctx.send('> :llama: **명령어 \"테러\" 사용법**\n**멈출 수 없으니 신중히 사용하세요!**\n```!테러 @<유저명> <반복 횟수(최대20)>```')
