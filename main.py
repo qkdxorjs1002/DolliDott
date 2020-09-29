@@ -4,29 +4,48 @@ import discord
 from discord.ext import commands, tasks
 
 _TOKEN = os.environ['DOLLIDOTT_TOKEN']
+cmd_prefix = '!'
 
-bot = commands.Bot(command_prefix='!')
+cmd_list = {'help': '명령어', 'lyrics': '가사', 'crazy': '테러'}
+cmd_help = {'명령어': '이 메시지를 띄울 수 있는 명령어에요.', 'lyrics': '돌리랑 도트 가사를 볼 수 있는 명령어에요.', '테러': '돌리랑 도트가 그렇게 좋아? 그럼 계속 불러!'}
 
-comments_lyrics = ['> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:\n> 돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
+comments_lyrics = ['> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
+                   '> 돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
                    '> 마차를~ 끌고~ 모래~ 언덕을~ 지나네~~~:musical_note: (찌나네~)',
-                   '> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:\n> 돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
+                   '> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
+                   '> 돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
                    '> 이빨은~ 작아도~ 먹는걸~ 좋아해~~~:musical_note: (물진 않아요~)']
+
+bot = commands.Bot(command_prefix=cmd_prefix)
 
 
 @bot.event
 async def on_ready():
-    message = 'Logged in as' + bot.user.name + ', id: ' + str(bot.user.id) + '\n'
+    message = 'Logged in as ' + bot.user.name + ', id: ' + str(bot.user.id) + '\n'
     print(message)
 
 
-@bot.command(name='가사')
+# 명령 "명령어"
+@bot.command(name=cmd_list['help'])
+async def help_me(ctx):
+    message = '> 사용 가능한 명령어 목록\n```'
+    for cmd in cmd_list:
+        message += ':round_pushpin: ' + cmd_prefix + cmd + ' ' + cmd_help[cmd] + '\n\n'
+    message += '```'
+
+    await ctx.send(message)
+
+
+# 명령 "가사"
+@bot.command(name=cmd_list['lyrics'])
 async def lyrics(ctx):
     for comment in comments_lyrics:
         await ctx.send(comment)
-        time.sleep(1)
+        time.sleep(0.75)
 
 
-@bot.command(name='테러')
+# 명령 "테러"
+@bot.command(name=cmd_list['crazy'])
 async def crazy(ctx, user: discord.User, cnt=1):
     message = '> ' + user.display_name + ': \"돌리랑~ 도트가~ 제일~ 좋아~:musical_note:\"'
     await ctx.send(bot.user.avatar_url)
@@ -38,7 +57,7 @@ async def crazy(ctx, user: discord.User, cnt=1):
     for idx in range(cnt):
         for comment in comments_lyrics:
             await user.send(comment)
-            time.sleep(1)
+            time.sleep(0.75)
 
 
 @crazy.error
