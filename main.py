@@ -7,7 +7,10 @@ _TOKEN = os.environ['DOLLIDOTT_TOKEN']
 
 cmd_prefix = '!'
 cmd_list = {'help': '명령어', 'invite': '초대', 'lyrics': '가사', 'crazy': '테러'}
-cmd_help = {'명령어': '이 메시지를 띄울 수 있는 명령어에요.', 'lyrics': '돌리랑 도트 가사를 볼 수 있는 명령어에요.', '테러': '돌리랑 도트가 그렇게 좋아? 그럼 계속 불러!'}
+cmd_help = {'help': '이 메시지를 띄울 수 있는 명령어에요.',
+            'invite': '돌리랑 도트를 다른 서버에 초대해보세요.',
+            'lyrics': '돌리랑 도트 가사를 볼 수 있는 명령어에요.',
+            'crazy': '돌리랑 도트가 그렇게 좋아? 그럼 계속 불러!'}
 
 comments_lyrics = ['> 돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
                    '> 돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
@@ -27,10 +30,10 @@ async def on_ready():
 
 # 명령 "명령어"
 @bot.command(name=cmd_list['help'])
-async def help_me(ctx):
+async def help(ctx):
     message = '> :llama: **사용 가능한 명령어 목록**\n```'
-    for cmd in cmd_list:
-        message += ':round_pushpin: ' + cmd_prefix + cmd + ' ' + cmd_help[cmd] + '\n\n'
+    for cmd, val in cmd_list.items():
+        message += ':round_pushpin: ' + cmd_prefix + val + ' ' + cmd_help[cmd] + '\n\n'
     message += '```'
 
     await ctx.send(message)
@@ -38,7 +41,7 @@ async def help_me(ctx):
 
 # 명령 "초대"
 @bot.command(name=cmd_list['invite'])
-async def lyrics(ctx):
+async def invite(ctx):
     message = '> :llama: **돌리랑 도트를 다른 서버에 초대해보세요!**\n' + \
               '```https://discord.com/oauth2/authorize?client_id=' + str(bot.user.id) + '&scope=bot```'
     await ctx.send(message)
