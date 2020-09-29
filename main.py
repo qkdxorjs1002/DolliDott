@@ -1,6 +1,9 @@
+import os
 import time
 import discord
 from discord.ext import commands, tasks
+
+_TOKEN = os.environ['DOLLIDOTT_TOKEN']
 
 bot = commands.Bot(command_prefix='!')
 
@@ -47,4 +50,4 @@ async def crazy_error(ctx, error):
         await ctx.send('> **명령어 \"테러\" 사용법**\n**멈출 수 없으니 신중히 사용하세요!**\n```!테러 @<유저명> <반복 횟수(최대20)>```')
 
 
-bot.run('NzYwNTc5NjU1NDM4NDM0NDQ0.X3OHAA.HIrVROLH_jRykdtv_DRJgy-esx4')
+bot.run(_TOKEN)
