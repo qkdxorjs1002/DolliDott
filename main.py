@@ -31,9 +31,9 @@ async def on_ready():
 # 명령 "명령어"
 @bot.command(name=cmd_list['help'])
 async def help(ctx):
-    message = '> :llama: **사용 가능한 명령어 목록**\n>>> '
+    message = '> :llama: **사용 가능한 명령어 목록**\n\n>>> '
     for cmd, val in cmd_list.items():
-        message += ':round_pushpin: ' + cmd_prefix + val + ' ' + cmd_help[cmd] + '\n\n'
+        message += ':round_pushpin: ' + cmd_prefix + val + '\t' + cmd_help[cmd] + '\n\n'
 
     await ctx.send(message)
 
