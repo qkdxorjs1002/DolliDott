@@ -9,14 +9,31 @@ cmd_prefix = '!'
 cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어에요.'],
             'invite': ['초대', '돌리랑 도트를 다른 서버에 초대해보세요.'],
             'lyrics': ['가사', '돌리랑 도트 가사를 볼 수 있는 명령어에요.'],
+            'damedane': ['다메다네', '다메다네~다메요~다메나노요~~'],
             'crazy': ['테러', '돌리랑 도트가 그렇게 좋아? 그럼 계속 불러!']}
 
-comments_lyrics = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
-                   '돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
-                   '마차를~ 끌고~ 모래~ 언덕을~ 지나네~~~:musical_note: (찌나네~)',
-                   '돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
-                   '돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
-                   '이빨은~ 작아도~ 먹는걸~ 좋아해~~~:musical_note: (물진 않아요~)']
+lyrics_dollidott = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
+                    '돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
+                    '마차를~ 끌고~ 모래~ 언덕을~ 지나네~~~:musical_note: (찌나네~)',
+                    '돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
+                    '돌리랑~ 도트가~ 제일~~~ 쪼아~:musical_note:',
+                    '이빨은~ 작아도~ 먹는걸~ 좋아해~~~:musical_note: (물진 않아요~)']
+
+lyrics_damedane = ['だめだねだめよだめなのよ',
+                   '다메다네 다메요 다메나노요',
+                   '그건 안돼 안돼 절대 안돼',
+                   '',
+                   'あんたが好きで好きすぎて',
+                   '안타가 스키데 스키스기테',
+                   '당신이 좋아서 너무 좋아서',
+                   '',
+                   'どれだけ強いお酒でも',
+                   '도레다케 츠요이 오사케데모',
+                   '아무리 센 술로도',
+                   '',
+                   '歪まない思い出が馬鹿みたい',
+                   '유가마나이 오모이데가 바카미타이',
+                   '일그러지지 않는 추억이 바보 같아']
 
 bot = commands.Bot(command_prefix=cmd_prefix)
 
@@ -69,7 +86,15 @@ async def invite(ctx):
 # 명령 "가사"
 @bot.command(name=cmd_list['lyrics'][0])
 async def lyrics(ctx):
-    for comment in comments_lyrics:
+    for comment in lyrics_dollidott:
+        message = make_message(comment)
+        await ctx.send(message)
+
+
+# 명령 "다메다네"
+@bot.command(name=cmd_list['damedane'][0])
+async def lyrics(ctx):
+    for comment in lyrics_damedane:
         message = make_message(comment)
         await ctx.send(message)
 
@@ -78,14 +103,14 @@ async def lyrics(ctx):
 @bot.command(name=cmd_list['crazy'][0])
 async def crazy(ctx, user: discord.User, cnt=1):
     await ctx.send(bot.user.avatar_url)
-    message = make_message(user.display_name + ': ' + comments_lyrics[0])
+    message = make_message(user.display_name + ': ' + lyrics_dollidott[0])
     await ctx.send(message)
 
     if cnt > 20:
         cnt = 20
 
     for idx in range(cnt):
-        for comment in comments_lyrics:
+        for comment in lyrics_dollidott:
             comm = make_message(comment)
             await user.send(comm)
 
