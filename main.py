@@ -78,9 +78,8 @@ async def lyrics(ctx):
 # 명령 "테러"
 @bot.command(name=cmd_list['crazy'][0])
 async def crazy(ctx, user: discord.User, cnt=1):
-    message = make_message(user.display_name + comments_lyrics[0],
-                           bot.user.avatar_url)
-
+    await ctx.send(bot.user.avatar_url)
+    message = make_message(user.display_name + comments_lyrics[0])
     await ctx.send(message)
 
     if cnt > 20:
