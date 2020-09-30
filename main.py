@@ -86,17 +86,21 @@ async def invite(ctx):
 # 명령 "가사"
 @bot.command(name=cmd_list['lyrics'][0])
 async def lyrics(ctx):
+    message = ''
     for comment in lyrics_dollidott:
-        message = make_message(comment)
-        await ctx.send(message)
+        message += comment + '\n'
+
+    await ctx.send(make_message(message))
 
 
 # 명령 "다메다네"
 @bot.command(name=cmd_list['damedane'][0])
 async def lyrics(ctx):
+    message = ''
     for comment in lyrics_damedane:
-        message = make_message(comment)
-        await ctx.send(message)
+        message += comment + '\n'
+
+    await ctx.send(make_message(message))
 
 
 # 명령 "테러"
