@@ -99,7 +99,7 @@ async def lyrics(ctx):
     message = ''
     for comment in lyrics_damedane:
         message += comment + '\n'
-
+    await ctx.send('https://tenor.com/view/damedane-gif-18432724')
     await ctx.send(make_message(message))
 
 
