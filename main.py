@@ -79,7 +79,7 @@ async def lyrics(ctx):
 @bot.command(name=cmd_list['crazy'][0])
 async def crazy(ctx, user: discord.User, cnt=1):
     await ctx.send(bot.user.avatar_url)
-    message = make_message(user.display_name + comments_lyrics[0])
+    message = make_message(user.display_name + ': ' + comments_lyrics[0])
     await ctx.send(message)
 
     if cnt > 20:
@@ -87,7 +87,8 @@ async def crazy(ctx, user: discord.User, cnt=1):
 
     for idx in range(cnt):
         for comment in comments_lyrics:
-            await user.send(comment)
+            comm = make_message(comment)
+            await user.send(comm)
             time.sleep(0.75)
 
 
