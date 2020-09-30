@@ -22,7 +22,12 @@ bot = commands.Bot(command_prefix=cmd_prefix)
 
 
 def make_message(contents, title='', sub='', contents_type='context'):
-    message = '> :llama: **' + title + '**\n\n**' + sub + '**\n'
+    message = ''
+    if title == '':
+        message += '> :llama: **' + title + '**\n\n'
+
+    if sub == '':
+        message += '**' + sub + '**\n'
 
     if contents_type == 'context':
         message += '>>> ' + contents
