@@ -23,10 +23,10 @@ bot = commands.Bot(command_prefix=cmd_prefix)
 
 def make_message(contents, title='', sub='', contents_type='context'):
     message = ''
-    if not title:
+    if title != '':
         message += '> :llama: **' + title + '**\n\n'
 
-    if not sub:
+    if sub != '':
         message += '**' + sub + '**\n'
 
     if contents_type == 'context':
@@ -52,7 +52,7 @@ async def help(ctx):
         contents += ':round_pushpin: ' + cmd_prefix + val[0] + '\t' + val[1] + '\n\n'
 
     message = make_message(contents,
-                           '사용 가능한 명령어 목록', '', 'command')
+                           '사용 가능한 명령어 목록')
 
     await ctx.send(message)
 
