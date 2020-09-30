@@ -39,7 +39,7 @@ async def on_ready():
 
 
 # 명령 "명령어"
-@bot.command(name=cmd_list['help'])
+@bot.command(name=cmd_list['help'][0])
 async def help(ctx):
     contents = ''
 
@@ -53,7 +53,7 @@ async def help(ctx):
 
 
 # 명령 "초대"
-@bot.command(name=cmd_list['invite'])
+@bot.command(name=cmd_list['invite'][0])
 async def invite(ctx):
     message = make_message('돌리랑 도트를 다른 서버에 초대해보세요!', '',
                            'https://discord.com/oauth2/authorize?client_id=' + str(bot.user.id) + '&scope=bot')
@@ -62,7 +62,7 @@ async def invite(ctx):
 
 
 # 명령 "가사"
-@bot.command(name=cmd_list['lyrics'])
+@bot.command(name=cmd_list['lyrics'][0])
 async def lyrics(ctx):
     for comment in comments_lyrics:
         await ctx.send(comment)
@@ -70,7 +70,7 @@ async def lyrics(ctx):
 
 
 # 명령 "테러"
-@bot.command(name=cmd_list['crazy'])
+@bot.command(name=cmd_list['crazy'][0])
 async def crazy(ctx, user: discord.User, cnt=1):
     message = make_message(bot.user.avatar_url, '',
                            user.display_name + comments_lyrics[0])
