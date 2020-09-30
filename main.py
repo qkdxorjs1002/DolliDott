@@ -72,7 +72,6 @@ async def lyrics(ctx):
     for comment in comments_lyrics:
         message = make_message(comment)
         await ctx.send(message)
-        time.sleep(0.75)
 
 
 # 명령 "테러"
@@ -89,7 +88,6 @@ async def crazy(ctx, user: discord.User, cnt=1):
         for comment in comments_lyrics:
             comm = make_message(comment)
             await user.send(comm)
-            time.sleep(0.75)
 
 
 @crazy.error
