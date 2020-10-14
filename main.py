@@ -6,6 +6,9 @@ from discord.ext import commands, tasks
 import requests
 from bs4 import BeautifulSoup
 
+from googletrans import Translator
+
+
 _TOKEN = os.environ['DOLLIDOTT_TOKEN']
 
 cmd_prefix = '!'
@@ -17,7 +20,8 @@ cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어�
             'krw2usd': ['KRW2USD', '한화를 미국 달러로 실시간 환율을 반영해요.'],
             'usd2krw': ['USD2KRW', '미국 달러를 한화로  실시간 환율을 반영해요.'],
             'krw2cny': ['KRW2CNY', '한화를 중국 위안으로 실시간 환율을 반영해요.'],
-            'cny2krw': ['CNY2KRW', '중국 위안을 한화로 실시간 환율을 반영해요.']}
+            'cny2krw': ['CNY2KRW', '중국 위안을 한화로 실시간 환율을 반영해요.'],
+            'ko': ['ko', '다른 언어를 한국어로 번역해요.']}
 
 lyrics_dollidott = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
                     '돌리랑~ 도트가~ 제일~ 쪼아~:musical_note:',
@@ -48,6 +52,8 @@ naver_finance_1cny = '#exchangeList > li:nth-child(4) > a.head.cny > div > span.
 
 bot = commands.Bot(command_prefix=cmd_prefix)
 
+translator = Translator()
+
 
 def make_message(contents, title='', sub='', contents_type='context'):
     message = ''
@@ -73,6 +79,12 @@ def request_finance(url, path):
     target = soup.select_one(path)
 
     return target.text.replace(',', '')
+
+
+def translate(text):
+    result = translator.translate(text, dest="ko")
+
+    return result[0].text
 
 
 @bot.event
@@ -184,6 +196,14 @@ async def lyrics(ctx, value):
     result = round(invalue * float(rate), 2)
     message = '**' + "{:,}".format(invalue) + '** :flag_cn:   :left_right_arrow:   **' + \
               "{:,}".format(result) + '** :flag_kr:'
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "ko"
+@bot.command(name=cmd_list['ko'][0])
+async def lyrics(ctx, *, text):
+    message = translate(text)
 
     await ctx.send(make_message(message))
 
