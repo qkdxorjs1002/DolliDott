@@ -318,7 +318,7 @@ async def cn_error(ctx, error):
 # 명령 "id"
 @bot.command(name='id')
 async def cn(ctx):
-    message = guild.TextChannel.id
+    message = str(guild.TextChannel.id)
 
     await ctx.send(make_message(message))
 
