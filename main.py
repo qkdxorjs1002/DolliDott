@@ -218,10 +218,10 @@ async def cny2krw(ctx, value):
 @bot.command(name=cmd_list['ko'][0])
 async def ko(ctx, channel: discord.TextChannel, *, text):
     config = read_config(channel.id, 'tts')
-    tts = ''
+    prefix = ''
     if config:
-        tts = '/tts '
-    message = translate("ko", str(text))
+        prefix = '/tts '
+    message = prefix + translate("ko", str(text))
 
     await ctx.send(make_message(message))
 
@@ -230,10 +230,10 @@ async def ko(ctx, channel: discord.TextChannel, *, text):
 @bot.command(name=cmd_list['en'][0])
 async def en(ctx, channel: discord.TextChannel, *, text):
     config = read_config(channel.id, 'tts')
-    tts = ''
+    prefix = ''
     if config:
-        tts = '/tts '
-    message = translate("en", str(text))
+        prefix = '/tts '
+    message = prefix + translate("en", str(text))
 
     await ctx.send(make_message(message))
 
@@ -242,10 +242,10 @@ async def en(ctx, channel: discord.TextChannel, *, text):
 @bot.command(name=cmd_list['cn'][0])
 async def cn(ctx, channel: discord.TextChannel, *, text):
     config = read_config(channel.id, 'tts')
-    tts = ''
+    prefix = ''
     if config:
-        tts = '/tts '
-    message = tts + translate("zh-cn", str(text))
+        prefix = '/tts '
+    message = prefix + translate("zh-cn", str(text))
 
     await ctx.send(make_message(message))
 
