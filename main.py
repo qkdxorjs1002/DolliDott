@@ -43,8 +43,8 @@ lyrics_damedane = ['だめだねだめよだめなのよ',
                    '일그러지지 않는 추억이 바보 같아']
 
 naver_finance_url = 'https://finance.naver.com/marketindex/'
-naver_finance_1usd = 'body > div > table > tbody > tr:nth-child(1) > td.sale'
-naver_finance_1cny = 'body > div > table > tbody > tr:nth-child(4) > td.sale'
+naver_finance_1usd = '#exchangeList > li.on > a.head.usd > div > span.value'
+naver_finance_1cny = '#exchangeList > li:nth-child(4) > a.head.cny > div > span.value'
 
 bot = commands.Bot(command_prefix=cmd_prefix)
 
@@ -70,9 +70,9 @@ def request_finance(url, path):
     html = res.text
 
     soup = BeautifulSoup(html, 'html.parser')
-    target = soup.select_one(path).text
+    target = soup.select_one(path)
 
-    return target
+    return target.text.replace(',', '')
 
 
 @bot.event
@@ -143,9 +143,11 @@ async def crazy(ctx, user: discord.User, cnt=1):
 # 명령 "KRW2USD"
 @bot.command(name=cmd_list['krw2usd'][0])
 async def lyrics(ctx, value):
+    invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1usd)
-    result = round(value / rate, 2)
-    message = value + ':flag_kr:은 ' + str(result) + ':flag_us:입니다.'
+    result = round(invalue / float(rate), 2)
+    message = '**' + "{:,}".format(invalue) + '** :flag_kr:   :left_right_arrow:   **' + \
+              "{:,}".format(result) + '** :flag_us:'
 
     await ctx.send(make_message(message))
 
@@ -153,9 +155,11 @@ async def lyrics(ctx, value):
 # 명령 "USD2KRW"
 @bot.command(name=cmd_list['usd2krw'][0])
 async def lyrics(ctx, value):
+    invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1usd)
-    result = round(value * rate, 2)
-    message = value + ':flag_us:는 ' + str(result) + ':flag_kr:입니다.'
+    result = round(invalue * float(rate), 2)
+    message = '**' + "{:,}".format(invalue) + '** :flag_us:   :left_right_arrow:   **' + \
+              "{:,}".format(result) + '** :flag_kr:'
 
     await ctx.send(make_message(message))
 
@@ -163,9 +167,11 @@ async def lyrics(ctx, value):
 # 명령 "KRW2CNY"
 @bot.command(name=cmd_list['krw2cny'][0])
 async def lyrics(ctx, value):
+    invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1cny)
-    result = round(value / rate, 2)
-    message = value + ':flag_kr:은 ' + str(result) + ':flag_cn:입니다.'
+    result = round(invalue / float(rate), 2)
+    message = '**' + "{:,}".format(invalue) + '** :flag_kr:   :left_right_arrow:   **' + \
+              "{:,}".format(result) + '** :flag_cn:'
 
     await ctx.send(make_message(message))
 
@@ -173,9 +179,11 @@ async def lyrics(ctx, value):
 # 명령 "CNY2KRW"
 @bot.command(name=cmd_list['cny2krw'][0])
 async def lyrics(ctx, value):
+    invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1cny)
-    result = round(value * rate, 2)
-    message = value + ':flag_cn:은 ' + str(result) + ':flag_kr:입니다.'
+    result = round(invalue * float(rate), 2)
+    message = '**' + "{:,}".format(invalue) + '** :flag_cn:   :left_right_arrow:   **' + \
+              "{:,}".format(result) + '** :flag_kr:'
 
     await ctx.send(make_message(message))
 
