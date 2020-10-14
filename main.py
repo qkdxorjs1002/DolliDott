@@ -1,7 +1,10 @@
 import os
-import time
+
 import discord
 from discord.ext import commands, tasks
+
+import requests
+from bs4 import BeautifulSoup
 
 _TOKEN = os.environ['DOLLIDOTT_TOKEN']
 
@@ -39,6 +42,10 @@ lyrics_damedane = ['だめだねだめよだめなのよ',
                    '유가마나이 오모이데가 바카미타이',
                    '일그러지지 않는 추억이 바보 같아']
 
+naver_finance_url = 'https://finance.naver.com/marketindex/'
+naver_finance_1usd = 'body > div > table > tbody > tr:nth-child(1) > td.sale'
+naver_finance_1cny = 'body > div > table > tbody > tr:nth-child(4) > td.sale'
+
 bot = commands.Bot(command_prefix=cmd_prefix)
 
 
@@ -56,6 +63,16 @@ def make_message(contents, title='', sub='', contents_type='context'):
         message += '```' + contents + '```'
 
     return message
+
+
+def request_finance(url, path):
+    res = requests.get(url)
+    html = res.text
+
+    soup = BeautifulSoup(html, 'html.parser')
+    target = soup.select_one(path).text
+
+    return target
 
 
 @bot.event
@@ -121,6 +138,46 @@ async def crazy(ctx, user: discord.User, cnt=1):
         for comment in lyrics_dollidott:
             comm = make_message(comment)
             await user.send(comm)
+
+
+# 명령 "KRW2USD"
+@bot.command(name=cmd_list['krw2usd'][0])
+async def lyrics(ctx, value):
+    rate = request_finance(naver_finance_url, naver_finance_1usd)
+    result = round(value / rate, 2)
+    message = value + ':flag_kr:은 ' + str(result) + ':flag_us:입니다.'
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "USD2KRW"
+@bot.command(name=cmd_list['usd2krw'][0])
+async def lyrics(ctx, value):
+    rate = request_finance(naver_finance_url, naver_finance_1usd)
+    result = round(value * rate, 2)
+    message = value + ':flag_us:는 ' + str(result) + ':flag_kr:입니다.'
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "KRW2CNY"
+@bot.command(name=cmd_list['krw2cny'][0])
+async def lyrics(ctx, value):
+    rate = request_finance(naver_finance_url, naver_finance_1cny)
+    result = round(value / rate, 2)
+    message = value + ':flag_kr:은 ' + str(result) + ':flag_cn:입니다.'
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "CNY2KRW"
+@bot.command(name=cmd_list['cny2krw'][0])
+async def lyrics(ctx, value):
+    rate = request_finance(naver_finance_url, naver_finance_1cny)
+    result = round(value * rate, 2)
+    message = value + ':flag_cn:은 ' + str(result) + ':flag_kr:입니다.'
+
+    await ctx.send(make_message(message))
 
 
 @crazy.error
