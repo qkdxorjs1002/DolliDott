@@ -252,7 +252,7 @@ async def cn(ctx, channel: discord.TextChannel, *, text):
 
 # 명령 "tts"
 @bot.command(name=cmd_list['tts'][0])
-async def tts(ctx, channel: discord.TextChannel):
+async def cn(ctx, channel: discord.TextChannel):
     config = read_config(channel.id, 'tts')
     if config:
         set_config(channel.id, 'tts', False)
