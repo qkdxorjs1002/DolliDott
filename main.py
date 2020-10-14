@@ -349,3 +349,5 @@ async def tts_error(ctx, error):
                            '명령어 \"tts\" 사용법', '번역기의 TTS 기능을 끄거나 켭니다.', 'command')
 
     await ctx.send(message)
+
+bot.run(_TOKEN)
