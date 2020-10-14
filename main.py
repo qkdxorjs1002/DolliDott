@@ -220,7 +220,7 @@ async def en(ctx, *, text):
 # 명령 "cn"
 @bot.command(name=cmd_list['cn'][0])
 async def cn(ctx, *, text):
-    message = translate("cn", str(text))
+    message = translate("zh-Hans", str(text))
 
     await ctx.send(make_message(message))
 
