@@ -1,7 +1,6 @@
 import os
 
 import discord
-from discord import guild
 from discord.ext import commands, tasks
 
 import requests
@@ -226,16 +225,6 @@ async def cn(ctx, *, text):
     await ctx.send(make_message(message))
 
 
-# 명령 "tts"
-@bot.command(name=cmd_list['tts'][0])
-async def cn(ctx):
-    bot.get_channel()
-
-    message = ''
-
-    await ctx.send(make_message(message))
-
-
 @crazy.error
 async def crazy_error(ctx, error):
     print(error)
@@ -313,14 +302,5 @@ async def cn_error(ctx, error):
 
     await ctx.send(message)
 
-
-# 명령 "id"
-@bot.command(name='id')
-async def cn(ctx):
-    bot.get_channel()
-
-    message = guild.TextChannel.id
-
-    await ctx.send(make_message(message))
 
 bot.run(_TOKEN)
