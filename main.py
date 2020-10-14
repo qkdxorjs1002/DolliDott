@@ -50,6 +50,8 @@ lyrics_damedane = ['だめだねだめよだめなのよ',
                    '유가마나이 오모이데가 바카미타이',
                    '일그러지지 않는 추억이 바보 같아']
 
+channel_config = {}
+
 naver_finance_url = 'https://finance.naver.com/marketindex/'
 naver_finance_1usd = '#exchangeList > li.on > a.head.usd > div > span.value'
 naver_finance_1cny = '#exchangeList > li:nth-child(4) > a.head.cny > div > span.value'
@@ -88,6 +90,15 @@ def translate(lang, text):
     result = translator.translate(text, dest=lang)
 
     return result.text
+
+
+def set_config(channel_id, key, value):
+    channel_config[channel_id] = {key: value}
+
+
+def read_config(channel_id, key):
+
+    return channel_config[channel_id][key]
 
 
 @bot.event
@@ -205,7 +216,11 @@ async def cny2krw(ctx, value):
 
 # 명령 "ko"
 @bot.command(name=cmd_list['ko'][0])
-async def ko(ctx, *, text):
+async def ko(ctx, channel: discord.TextChannel, *, text):
+    config = read_config(channel.id, 'tts')
+    tts = ''
+    if config:
+        tts = '/tts '
     message = translate("ko", str(text))
 
     await ctx.send(make_message(message))
@@ -213,7 +228,11 @@ async def ko(ctx, *, text):
 
 # 명령 "en"
 @bot.command(name=cmd_list['en'][0])
-async def en(ctx, *, text):
+async def en(ctx, channel: discord.TextChannel, *, text):
+    config = read_config(channel.id, 'tts')
+    tts = ''
+    if config:
+        tts = '/tts '
     message = translate("en", str(text))
 
     await ctx.send(make_message(message))
@@ -221,18 +240,26 @@ async def en(ctx, *, text):
 
 # 명령 "cn"
 @bot.command(name=cmd_list['cn'][0])
-async def cn(ctx, *, text):
-    message = translate("zh-cn", str(text))
+async def cn(ctx, channel: discord.TextChannel, *, text):
+    config = read_config(channel.id, 'tts')
+    tts = ''
+    if config:
+        tts = '/tts '
+    message = tts + translate("zh-cn", str(text))
 
     await ctx.send(make_message(message))
 
 
 # 명령 "tts"
 @bot.command(name=cmd_list['tts'][0])
-async def cn(ctx):
-    bot.get_channel()
-
-    message = ''
+async def cn(ctx, channel: discord.TextChannel):
+    config = read_config(channel.id, 'tts')
+    if config:
+        set_config(channel.id, 'tts', False)
+        message = 'TTS가 비활성화 되었습니다.'
+    else:
+        set_config(channel.id, 'tts', True)
+        message = 'TTS가 활성화 되었습니다.'
 
     await ctx.send(make_message(message))
 
@@ -315,11 +342,10 @@ async def cn_error(ctx, error):
     await ctx.send(message)
 
 
-# 명령 "id"
-@bot.command(name='id')
-async def cn(ctx):
-    message = str(guild.TextChannel.id)
+@tts.error
+async def tts_error(ctx, error):
+    print(error)
+    message = make_message('!tts',
+                           '명령어 \"tts\" 사용법', '번역기의 TTS 기능을 끄거나 켭니다.', 'command')
 
-    await ctx.send(make_message(message))
-
-bot.run(_TOKEN)
+    await ctx.send(message)
