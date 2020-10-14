@@ -21,7 +21,9 @@ cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어�
             'usd2krw': ['USD2KRW', '미국 달러를 한화로  실시간 환율을 반영해요.'],
             'krw2cny': ['KRW2CNY', '한화를 중국 위안으로 실시간 환율을 반영해요.'],
             'cny2krw': ['CNY2KRW', '중국 위안을 한화로 실시간 환율을 반영해요.'],
-            'ko': ['ko', '다른 언어를 한국어로 번역해요.']}
+            'ko': ['ko', '다른 언어를 한국어로 번역해요.'],
+            'en': ['en', '다른 언어를 영어로 번역해요.'],
+            'cn': ['cn', '다른 언어를 중국어로 번역해요.']}
 
 lyrics_dollidott = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
                     '돌리랑~ 도트가~ 제일~ 쪼아~:musical_note:',
@@ -52,8 +54,6 @@ naver_finance_1cny = '#exchangeList > li:nth-child(4) > a.head.cny > div > span.
 
 bot = commands.Bot(command_prefix=cmd_prefix)
 
-translator = Translator()
-
 
 def make_message(contents, title='', sub='', contents_type='context'):
     message = ''
@@ -81,10 +81,11 @@ def request_finance(url, path):
     return target.text.replace(',', '')
 
 
-def translate(text):
-    result = translator.translate(text, dest="ko")
+def translate(lang, text):
+    translator = Translator()
+    result = translator.translate(text, dest=lang)
 
-    return result[0].text
+    return result.text
 
 
 @bot.event
@@ -154,7 +155,7 @@ async def crazy(ctx, user: discord.User, cnt=1):
 
 # 명령 "KRW2USD"
 @bot.command(name=cmd_list['krw2usd'][0])
-async def lyrics(ctx, value):
+async def krw2usd(ctx, value):
     invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1usd)
     result = round(invalue / float(rate), 2)
@@ -166,7 +167,7 @@ async def lyrics(ctx, value):
 
 # 명령 "USD2KRW"
 @bot.command(name=cmd_list['usd2krw'][0])
-async def lyrics(ctx, value):
+async def usd2krw(ctx, value):
     invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1usd)
     result = round(invalue * float(rate), 2)
@@ -178,7 +179,7 @@ async def lyrics(ctx, value):
 
 # 명령 "KRW2CNY"
 @bot.command(name=cmd_list['krw2cny'][0])
-async def lyrics(ctx, value):
+async def krw2cny(ctx, value):
     invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1cny)
     result = round(invalue / float(rate), 2)
@@ -190,7 +191,7 @@ async def lyrics(ctx, value):
 
 # 명령 "CNY2KRW"
 @bot.command(name=cmd_list['cny2krw'][0])
-async def lyrics(ctx, value):
+async def cny2krw(ctx, value):
     invalue = float(value.replace(',', ''))
     rate = request_finance(naver_finance_url, naver_finance_1cny)
     result = round(invalue * float(rate), 2)
@@ -202,8 +203,24 @@ async def lyrics(ctx, value):
 
 # 명령 "ko"
 @bot.command(name=cmd_list['ko'][0])
-async def lyrics(ctx, *, text):
-    message = translate(text)
+async def ko(ctx, *, text):
+    message = translate("ko", str(text))
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "en"
+@bot.command(name=cmd_list['en'][0])
+async def en(ctx, *, text):
+    message = translate("en", str(text))
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "cn"
+@bot.command(name=cmd_list['cn'][0])
+async def cn(ctx, *, text):
+    message = translate("cn", str(text))
 
     await ctx.send(make_message(message))
 
@@ -221,6 +238,69 @@ async def crazy_error(ctx, error):
                                '명령어 \"테러\" 사용법', '멈출 수 없으니 신중히 사용하세요!', 'command')
 
         await ctx.send(message)
+
+
+@krw2usd.error
+async def krw2usd_error(ctx, error):
+    print(error)
+    message = make_message('!KRW2USD <금액>',
+                           '명령어 \"KRW2USD\" 사용법', '실시간 환율에 따라 한국 원을 미국 달러로 변환합니다.', 'command')
+
+    await ctx.send(message)
+
+
+@usd2krw.error
+async def usd2krw_error(ctx, error):
+    print(error)
+    message = make_message('!USD2KRW <금액>',
+                           '명령어 \"USD2KRW\" 사용법', '실시간 환율에 따라 미국 달러를 한국 원으로 변환합니다.', 'command')
+
+    await ctx.send(message)
+
+
+@krw2cny.error
+async def krw2cny_error(ctx, error):
+    print(error)
+    message = make_message('!KRW2CNY <금액>',
+                           '명령어 \"KRW2CNY\" 사용법', '실시간 환율에 따라 한국 원을 중국 위안으로 변환합니다.', 'command')
+
+    await ctx.send(message)
+
+
+@cny2krw.error
+async def cny2krw_error(ctx, error):
+    print(error)
+    message = make_message('!CNY2KRW <금액>',
+                           '명령어 \"CNY2KRW\" 사용법', '실시간 환율에 따라 중국 위안을 한국 원으로 변환합니다.', 'command')
+
+    await ctx.send(message)
+
+
+@ko.error
+async def ko_error(ctx, error):
+    print(error)
+    message = make_message('!ko <변환할 문장>',
+                           '명령어 \"ko\" 사용법', '문장을 한국어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
+@en.error
+async def en_error(ctx, error):
+    print(error)
+    message = make_message('!en <변환할 문장>',
+                           '명령어 \"en\" 사용법', '문장을 영어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
+@cn.error
+async def cn_error(ctx, error):
+    print(error)
+    message = make_message('!cn <변환할 문장>',
+                           '명령어 \"cn\" 사용법', '문장을 중국어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
 
 
 bot.run(_TOKEN)
