@@ -229,7 +229,7 @@ async def cn(ctx, *, text):
 # 명령 "cal"
 @bot.command(name=cmd_list['cal'][0])
 async def cal(ctx, *, text):
-    message = str(eval(str(text)))
+    message = str(text) + ' =   ' + str(eval(str(text)))
 
     await ctx.send(make_message(message))
 
