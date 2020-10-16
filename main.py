@@ -23,7 +23,8 @@ cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어�
             'cny2krw': ['CNY2KRW', '중국 위안을 한화로 실시간 환율을 반영해요.'],
             'ko': ['ko', '다른 언어를 한국어로 번역해요.'],
             'en': ['en', '다른 언어를 영어로 번역해요.'],
-            'cn': ['cn', '다른 언어를 중국어로 번역해요.']}
+            'cn': ['cn', '다른 언어를 중국어로 번역해요.'],
+            'cal': ['cal', '계산식을 처리해요.']}
 
 lyrics_dollidott = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
                     '돌리랑~ 도트가~ 제일~ 쪼아~:musical_note:',
@@ -225,6 +226,14 @@ async def cn(ctx, *, text):
     await ctx.send(make_message(message))
 
 
+# 명령 "cal"
+@bot.command(name=cmd_list['cal'][0])
+async def cal(ctx, *, text):
+    message = eval(str(text))
+
+    await ctx.send(make_message(message))
+
+
 @crazy.error
 async def crazy_error(ctx, error):
     print(error)
@@ -299,6 +308,15 @@ async def cn_error(ctx, error):
     print(error)
     message = make_message('!cn <변환할 문장>',
                            '명령어 \"cn\" 사용법', '문장을 중국어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
+@cal.error
+async def cal_error(ctx, error):
+    print(error)
+    message = make_message('!cal 계산식',
+                           '명령어 \"cal\" 사용법', '계산식을 계산합니다.', 'command')
 
     await ctx.send(message)
 
