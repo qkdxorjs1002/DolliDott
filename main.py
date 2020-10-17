@@ -77,7 +77,7 @@ def make_message(contents, title='', sub='', contents_type='context'):
     return message
 
 
-def request_finance(url, path):
+def request_finance(path):
     url = 'https://finance.naver.com/marketindex/'
 
     res = requests.get(url)
