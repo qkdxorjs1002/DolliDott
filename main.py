@@ -2,7 +2,7 @@ import os
 import ast
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +11,8 @@ from googletrans import Translator
 
 
 _TOKEN = os.environ['DOLLIDOTT_TOKEN']
+_PAPAGO_CLIENT_ID = os.environ['PAPAGO_CLIENT_ID']
+_PAPAGO_CLIENT_SECRET = os.environ['PAPAGO_CLIENT_SECRET']
 
 cmd_prefix = '!'
 cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어에요.'],
@@ -22,9 +24,12 @@ cmd_list = {'help': ['명령어', '이 메시지를 띄울 수 있는 명령어�
             'usd2krw': ['USD2KRW', '미국 달러를 한화로  실시간 환율을 반영해요.'],
             'krw2cny': ['KRW2CNY', '한화를 중국 위안으로 실시간 환율을 반영해요.'],
             'cny2krw': ['CNY2KRW', '중국 위안을 한화로 실시간 환율을 반영해요.'],
-            'ko': ['ko', '다른 언어를 한국어로 번역해요.'],
-            'en': ['en', '다른 언어를 영어로 번역해요.'],
-            'cn': ['cn', '다른 언어를 중국어로 번역해요.'],
+            'gko': ['gko', '구글을 통해 다른 언어를 한국어로 번역해요.'],
+            'gen': ['gen', '구글을 통해 다른 언어를 영어로 번역해요.'],
+            'gcn': ['gcn', '구글을 통해 다른 언어를 중국어로 번역해요.'],
+            'ko': ['ko', '파파고를 통해 다른 언어를 한국어로 번역해요.'],
+            'en': ['en', '파파고를 통해 다른 언어를 영어로 번역해요.'],
+            'cn': ['cn', '파파고를 통해 다른 언어를 중국어로 번역해요.'],
             'cal': ['cal', '계산식을 처리해요.']}
 
 lyrics_dollidott = ['돌리랑~ 도트가~ 제일~ 좋아~:musical_note:',
@@ -50,7 +55,6 @@ lyrics_damedane = ['だめだねだめよだめなのよ',
                    '유가마나이 오모이데가 바카미타이',
                    '일그러지지 않는 추억이 바보 같아']
 
-naver_finance_url = 'https://finance.naver.com/marketindex/'
 naver_finance_1usd = '#exchangeList > li.on > a.head.usd > div > span.value'
 naver_finance_1cny = '#exchangeList > li:nth-child(4) > a.head.cny > div > span.value'
 
@@ -74,6 +78,8 @@ def make_message(contents, title='', sub='', contents_type='context'):
 
 
 def request_finance(url, path):
+    url = 'https://finance.naver.com/marketindex/'
+
     res = requests.get(url)
     html = res.text
 
@@ -88,6 +94,51 @@ def translate(lang, text):
     result = translator.translate(text, dest=lang)
 
     return result.text
+
+
+def papago_detect_lang(text):
+    data = {'query': text}
+
+    url = "https://openapi.naver.com/v1/papago/detectLangs"
+
+    header = {"X-Naver-Client-Id": _PAPAGO_CLIENT_ID,
+              "X-Naver-Client-Secret": _PAPAGO_CLIENT_SECRET}
+
+    response = requests.post(url, headers=header, data=data)
+    response_code = response.status_code
+
+    if response_code == 200:
+        t_data = response.json()
+
+        return t_data['langCode']
+
+    return response_code
+
+
+def papago_translate(lang, text):
+    source_lang = papago_detect_lang(text)
+
+    if not source_lang:
+        source_lang = 'ko'
+
+    data = {'source': source_lang,
+            'target': lang,
+            'text': text}
+
+    url = "https://openapi.naver.com/v1/papago/n2mt"
+
+    header = {"X-Naver-Client-Id": _PAPAGO_CLIENT_ID,
+              "X-Naver-Client-Secret": _PAPAGO_CLIENT_SECRET}
+
+    response = requests.post(url, headers=header, data=data)
+    response_code = response.status_code
+
+    if response_code == 200:
+        t_data = response.json()
+
+        return t_data['message']['result']['translatedText']
+
+    return response_code
 
 
 @bot.event
@@ -159,7 +210,7 @@ async def crazy(ctx, user: discord.User, cnt=1):
 @bot.command(name=cmd_list['krw2usd'][0])
 async def krw2usd(ctx, value):
     invalue = float(value.replace(',', ''))
-    rate = request_finance(naver_finance_url, naver_finance_1usd)
+    rate = request_finance(naver_finance_1usd)
     result = round(invalue / float(rate), 2)
     message = '**' + "{:,}".format(invalue) + '** :flag_kr:   :left_right_arrow:   **' + \
               "{:,}".format(result) + '** :flag_us:'
@@ -171,7 +222,7 @@ async def krw2usd(ctx, value):
 @bot.command(name=cmd_list['usd2krw'][0])
 async def usd2krw(ctx, value):
     invalue = float(value.replace(',', ''))
-    rate = request_finance(naver_finance_url, naver_finance_1usd)
+    rate = request_finance(naver_finance_1usd)
     result = round(invalue * float(rate), 2)
     message = '**' + "{:,}".format(invalue) + '** :flag_us:   :left_right_arrow:   **' + \
               "{:,}".format(result) + '** :flag_kr:'
@@ -183,7 +234,7 @@ async def usd2krw(ctx, value):
 @bot.command(name=cmd_list['krw2cny'][0])
 async def krw2cny(ctx, value):
     invalue = float(value.replace(',', ''))
-    rate = request_finance(naver_finance_url, naver_finance_1cny)
+    rate = request_finance(naver_finance_1cny)
     result = round(invalue / float(rate), 2)
     message = '**' + "{:,}".format(invalue) + '** :flag_kr:   :left_right_arrow:   **' + \
               "{:,}".format(result) + '** :flag_cn:'
@@ -195,7 +246,7 @@ async def krw2cny(ctx, value):
 @bot.command(name=cmd_list['cny2krw'][0])
 async def cny2krw(ctx, value):
     invalue = float(value.replace(',', ''))
-    rate = request_finance(naver_finance_url, naver_finance_1cny)
+    rate = request_finance(naver_finance_1cny)
     result = round(invalue * float(rate), 2)
     message = '**' + "{:,}".format(invalue) + '** :flag_cn:   :left_right_arrow:   **' + \
               "{:,}".format(result) + '** :flag_kr:'
@@ -203,10 +254,34 @@ async def cny2krw(ctx, value):
     await ctx.send(make_message(message))
 
 
+# 명령 "gko"
+@bot.command(name=cmd_list['gko'][0])
+async def gko(ctx, *, text):
+    message = translate("ko", str(text))
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "gen"
+@bot.command(name=cmd_list['gen'][0])
+async def gen(ctx, *, text):
+    message = translate("en", str(text))
+
+    await ctx.send(make_message(message))
+
+
+# 명령 "gcn"
+@bot.command(name=cmd_list['gcn'][0])
+async def gcn(ctx, *, text):
+    message = translate("zh-cn", str(text))
+
+    await ctx.send(make_message(message))
+
+
 # 명령 "ko"
 @bot.command(name=cmd_list['ko'][0])
 async def ko(ctx, *, text):
-    message = translate("ko", str(text))
+    message = papago_translate("ko", str(text))
 
     await ctx.send(make_message(message))
 
@@ -214,7 +289,7 @@ async def ko(ctx, *, text):
 # 명령 "en"
 @bot.command(name=cmd_list['en'][0])
 async def en(ctx, *, text):
-    message = translate("en", str(text))
+    message = papago_translate("en", str(text))
 
     await ctx.send(make_message(message))
 
@@ -222,7 +297,7 @@ async def en(ctx, *, text):
 # 명령 "cn"
 @bot.command(name=cmd_list['cn'][0])
 async def cn(ctx, *, text):
-    message = translate("zh-cn", str(text))
+    message = papago_translate("zh-CN", str(text))
 
     await ctx.send(make_message(message))
 
@@ -286,10 +361,37 @@ async def cny2krw_error(ctx, error):
     await ctx.send(message)
 
 
+@gko.error
+async def gko_error(ctx, error):
+    print(error)
+    message = make_message('!gko <변환할 문장>',
+                           '명령어 \"gko\" 사용법', '문장을 한국어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
+@gen.error
+async def gen_error(ctx, error):
+    print(error)
+    message = make_message('!gen <변환할 문장>',
+                           '명령어 \"gen\" 사용법', '문장을 영어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
+@gcn.error
+async def gcn_error(ctx, error):
+    print(error)
+    message = make_message('!gcn <변환할 문장>',
+                           '명령어 \"gcn\" 사용법', '문장을 중국어로 변환해줍니다.', 'command')
+
+    await ctx.send(message)
+
+
 @ko.error
 async def ko_error(ctx, error):
     print(error)
-    message = make_message('!ko <변환할 문장>',
+    message = make_message('!pko <변환할 문장>',
                            '명령어 \"ko\" 사용법', '문장을 한국어로 변환해줍니다.', 'command')
 
     await ctx.send(message)
