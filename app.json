@@ -7,15 +7,15 @@
     ],
     "repository": "https://github.com/qkdxorjs1002/DolliDott",
     "env": {
-      "_TOKEN": {
+      "DOLLIDOTT_TOKEN": {
         "description": "Discord Token",
         "value": ""
       },
-      "_PAPAGO_CLIENT_ID": {
+      "PAPAGO_CLIENT_ID": {
         "description": "Papago Client ID",
         "value": ""
       },
-      "_PAPAGO_CLIENT_SECRET": {
+      "PAPAGO_CLIENT_SECRET": {
         "description": "Papago Client Secret Token",
         "value": ""
       }
