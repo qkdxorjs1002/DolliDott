@@ -1,0 +1,23 @@
+{
+    "name": "돌리도트 봇",
+    "description": "개인용 봇",
+    "keywords": [
+      "discord",
+      "bot"
+    ],
+    "repository": "https://github.com/qkdxorjs1002/DolliDott",
+    "env": {
+      "_TOKEN": {
+        "description": "Discord Token",
+        "value": ""
+      },
+      "_PAPAGO_CLIENT_ID": {
+        "description": "Papago Client ID",
+        "value": ""
+      },
+      "_PAPAGO_CLIENT_SECRET": {
+        "description": "Papago Client Secret Token",
+        "value": ""
+      }
+    }
+  }
